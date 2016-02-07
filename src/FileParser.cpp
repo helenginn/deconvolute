@@ -125,12 +125,8 @@ void FileParser::generateFunctionList()
     parserMap["GRIDDING"] = intVector;
     
     parserMap["WANG_ENVELOPE_OUTPUT"] = simpleString;
-    parserMap["GAP_INNER_RADIUS"] = doubleVector;
-    parserMap["GAP_OUTER_RADIUS"] = doubleVector;
     parserMap["NCS_DEFINITIONS_FILE"] = simpleString;
     parserMap["TWINNED_MTZ"] = simpleString;
-    parserMap["GAP_ENVELOPE_SCRIPT"] = simpleString;
-    parserMap["GAP_AVERAGE_SCRIPT"] = simpleString;
     parserMap["ORIGIN_IN_UNIT_CELL"] = doubleVector;
     parserMap["VIRION_GENEROUS_DIAMETER"] = simpleFloat;
     parserMap["VIRION_INNER_DIAMETER"] = simpleFloat;
