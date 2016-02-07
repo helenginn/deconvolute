@@ -1,0 +1,33 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.69])
+AC_INIT(deconvolute, 1.0, helen@strubi.ox.ac.uk)
+AM_INIT_AUTOMAKE(deconvolute, 1.0)
+AC_OUTPUT(Makefile src/Makefile)
+AC_CONFIG_SRCDIR([definitions.h])
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_CHECK_HEADERS([unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADER_STDBOOL
+AC_TYPE_SIZE_T
+
+AC_CHECK_PROG(GAP, gap, yes)
+if test x"${GAP}" != x"yes" ; then
+    AC_MSG_ERROR([Please install GAP before trying to build deconvolute.])
+fi
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_CHECK_FUNCS([memset pow sqrt strerror])
+
+AC_OUTPUT

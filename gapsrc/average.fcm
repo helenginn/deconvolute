@@ -1,0 +1,415 @@
+c
+c
+c***********************************************************************
+c*                                                                     *
+c*            Common Blocks for Averaging                              *
+c*            ===========================                              *
+c*                                                                     *
+c*   Latest mods Jan-1996.  JG/DS                                      *
+c*                                                                     *
+c***********************************************************************
+c
+        integer maxsym
+        parameter (maxsym=240)
+c----   ======================
+c----   max number of sym operators - also determines nnsym and maxxrc
+c---- 
+        integer maxxrc
+        parameter (maxxrc=2880)
+c----   =======================
+c----   12*maxsym (stores rot & trans for each)
+c----
+        integer mmaps
+        parameter (mmaps=60)
+c----   ====================
+c----
+        integer ibsize
+        parameter (ibsize=8)
+c----   ====================
+c----
+c%      integer max
+c%      parameter (max = 210 000 000)
+c----   ============================
+c----
+        integer natom, nnsym, nres
+        parameter (natom=70000,nnsym=240,nres=70000)
+c----   ==========================================
+c----
+        integer n_stream
+        parameter (n_stream=10)
+c----   =======================
+c----
+        real*8 zero
+        parameter (zero=0.0D0)
+c----   ======================
+c
+c***********************************************************************
+        common /av_io/ dunit
+c***********************************************************************
+c
+        integer dunit
+c
+c---- dunit - unit for driver input.
+c
+c***********************************************************************
+        common /av_pri/ terse,verbose
+c***********************************************************************
+c
+        logical terse,verbose
+c
+c---- terse, verbose : logical flags defining amount of output produced.
+c
+c***********************************************************************
+c JMD!PORT: reordered to prevent padding at start
+c        common/av_cnt1/nxtpix,n_left,nmaps,ns(mmaps),ne(mmaps),
+c     &  defined(mmaps)
+        common/av_cnt1/
+     &    nxtpix,n_left,ns(mmaps),ne(mmaps),
+     &    nmaps,
+     &    defined(mmaps)
+c***********************************************************************
+c
+        integer nmaps
+        integer*8 nxtpix,n_left,ns,ne
+        logical defined
+c
+c---- number of pixels in use: nxtpix
+c---- the number of pixels remaining in the scratch list: n_left
+c---- number of maps in use: nmaps
+c---- start pixel for each map (in list): ns
+c---- end pixel for each map: ne
+c---- defined is true if the map size and all that have been established
+c
+c***********************************************************************
+        common/av_cnt2/nx(3,mmaps),norg(3,mmaps),npix(mmaps),
+     &  iuvw(3,mmaps),nunit(3,mmaps),nstart(3,mmaps),nend(3,mmaps),
+     &  n10(3,mmaps)
+c***********************************************************************
+c
+        integer nx,norg,npix,iuvw,nunit,nstart,nend,n10
+c----
+c---- nx is the number of pixels in each direction in the map
+c---- norg is the origin of the map on the grid
+c---- npix is the total number of pixels per map
+c---- iuvw fast, medium and slow axes
+c---- nunit is the number of pixels in the complete unit cell
+c---- nstart is the starting pixel
+c---- nend is the end pixel
+c---- n10 is simply 10*nunit
+c
+c
+c***********************************************************************
+        common/av_cnt3/labels(mmaps),titles(mmaps),mtype(mmaps),
+     &  mscale(mmaps),moffset(mmaps),rholim(4,mmaps),sollev(mmaps)
+c***********************************************************************
+c
+        character*8     labels
+        integer         mtype
+        integer*2       sollev
+c
+        real mscale,moffset,rholim
+c
+        character*80 titles
+c
+c----   labels are the map labels (4 character internal labels)
+c----   titles are the titles of the maps
+c----   mtype defines the map type
+c----   mscale defines the scale factor applied to the electron
+c----          densities
+c----   moffset defines the offset applied to the electron densities
+c----   rholim defines rhomin, rhomax, rhomean, rhorms for the maps
+c----   solv defines mean solvent density
+c
+c----   read/write drivers
+c----
+c***********************************************************************
+        common/av_cnt4/pix_now(mmaps),word_now(mmaps)
+c***********************************************************************
+c
+        integer pix_now,word_now
+c----
+c----   pix_now points to the current pixel in the map
+c----   word_now points to the current word in the scratch array
+c----   (for sequential or 1-D access)
+c
+c
+c----
+c---- this is where we put it all:
+c---- (modified to be stub array for dyn. memory alloc.)
+c***********************************************************************
+        common/av_mass/scratch(2)
+c***********************************************************************
+c
+        integer*2 scratch
+        integer*8         p2al           ! p2: parser function
+        integer           p2al32         ! p2: parser function
+        logical           p2dal          ! p2: parser function
+        external          p2dal,p2al,p2al32
+c
+c***********************************************************************
+        common/av_assign/streams(n_stream),labelsa(n_stream),
+     &                   a_made(n_stream)
+c***********************************************************************
+        logical a_made
+        character*8 streams,labelsa
+c
+c----   this block contains labels for internal logical streams, the
+c----   maps assigned to them and flags to indicate which are active.
+c
+c
+c***********************************************************************
+        common/av_pipe /pipe
+c***********************************************************************
+        logical pipe
+c
+c----   this contains logical flag controlling piping of logical streams
+c
+c
+c***********************************************************************
+        common/av_rec /record,nrec
+c***********************************************************************
+        logical record
+        integer nrec
+c
+c----   this contains logical flag controlling recording of printed o/p
+c----   and the stream for that i/o
+c
+c
+c***********************************************************************
+        common/av_proper /proper
+c***********************************************************************
+        logical proper
+c
+c----   this contains logical flag that is set true if there is proper
+c----    crystallographic symmetry
+c
+c
+c***********************************************************************
+        common/av_xplor /xplor
+c***********************************************************************
+        logical xplor
+c
+c----   this contains logical flag that is set true if NCS operators
+c----   are to be written out in XPLOR format rather than GAP format.
+c
+c
+c***********************************************************************
+        common/av_symm/nsym,ops(3,3,maxsym),ops_inv(3,3,maxsym),
+     &  vecs(3,maxsym)
+c***********************************************************************
+        integer nsym
+c
+        real ops,ops_inv,vecs
+c
+c----   nsym is the number of symm ops in use.
+c----   ops  holds these operators (rotational parts only)
+c----   ops_inv holds the inverse operators
+c----   vecs holds the translational parts of ops
+c
+c
+c***********************************************************************
+        common/av_sybk/ops_back(3,3,maxsym),ops_invback(3,3,maxsym),
+     &                   vecs_back(3,maxsym)
+************************************************************************
+c
+        real ops_back,ops_invback,vecs_back
+c
+c
+c---- holds backups of ops...used in sterefi...refined ops written to it
+c----   "      "     "  inverse operators
+c---- holds backups of vecs...used in sterefi
+c
+c
+c***********************************************************************
+        common/av_savs/save_r(3,3,maxsym),save_v(3,maxsym),cg(3),
+     &                 cg_check
+c***********************************************************************
+c
+        real save_r,save_v,cg
+        logical cg_check
+c
+c----   save_r,save_v hold the absolutely sacred copies of NCS operators
+c----   (beyond the backup)
+c----   cg holds the vector between origin and c.of.g of object
+c---    flag to use cg options
+c
+c***********************************************************************
+        common/av_sym1/sum_temp,ir_temp(maxsym),in_temp,h_temp(maxsym),
+     &                 istat
+c***********************************************************************
+c
+        real*8  sum_temp
+        integer ir_temp,in_temp,h_temp,istat
+c
+c----   ir_temp holds rho during averaging
+c----   in_temp is the number of values
+c----   sum_temp is rho sum
+c----   h_temp is for the histogram of multiplicities
+c----   istat is the stats method used 0=all pair comp for cc,
+c----                                  1=vs mean
+c
+c***********************************************************************
+        common/av_xtal/xrtr(3,3,mmaps),xrintr(3,3,mmaps),xrcell(9,mmaps)
+     &  ,lgrp(mmaps)
+c***********************************************************************
+c
+        real xrtr,xrintr,xrcell
+c
+        integer lgrp
+c
+c----   xrtr are the orthogonalization matrices
+c----   xrintr are the deorthogonalization matrices
+c----   xrcell are the cell dimensions (angstreoms and degrees)
+c----   lgrp are the space group numbers
+c
+c
+c----   block for storing the crystallographic symmetry matrices for
+c----   each map.
+c
+c***********************************************************************
+        common/av_xrsy/xr_con,xr_sym(maxxrc,mmaps),
+     &                 xr_insym(maxxrc,mmaps),
+     &                 last_sym(maxsym,mmaps),n_xsym(mmaps)
+c***********************************************************************
+c
+        logical    xr_con(mmaps)
+        integer*2  xr_sym
+        integer    xr_insym,last_sym,n_xsym
+c
+c----   xr_sym   holds the crystallographic rot and trans matrices.
+c----   xr_insym holds integerized versions of the above.
+c----   last_sym holds the latest successful CSO for each NCSO
+c----   n_xsym   holds the number of CSO's for each map.
+c----   n10(3,mmaps)holds 10*the number of pixels in a cell edge (for
+c----            folding back into the cell correctly)
+c
+c***********************************************************************
+        common/av_brck/brick(3,mmaps),npix_b(mmaps),n_brick(3,mmaps)
+     &  ,nx_pad(3,mmaps),nx_tot(mmaps)
+c***********************************************************************
+c
+        integer brick, npix_b, n_brick, nx_pad, nx_tot
+c
+c----   brick is the number of pixels along a brick edge 
+c----   npix_b is the number of pixels in a brick
+c----   n_brick is the number of bricks along an edge
+c----   nx_pad is the number of pixels in each direction set aside
+c----          in memory (nx rounded up to nearest whole brick size)
+c----   nx_tot is the total number of pixels actually needed 
+c----          (nx_pad(1)*nx_pad(2)*nx_pad(3))
+c
+c
+c***********************************************************************
+        common /av_stats/ cc,r,r1
+        real*8   cc,r,r1
+c***********************************************************************
+c
+c***********************************************************************
+        common /av_dbug/ debug
+        logical debug
+c***********************************************************************
+c
+c***********************************************************************
+        common /av_atom/ coords(3,natom,nnsym)
+c***********************************************************************
+        real coords
+c
+c---- coords stores atomic coords for evaluating the NCS operators in
+c---- TOSS option.
+c
+c***********************************************************************
+c JMD!PORT: reordered to prevent padding at start
+c        common /av_con_stat/ ncut_l,ncut_u,mset,av_temp
+c     &                     ,sigm,sig_max,sig_min
+        common /av_con_stat/
+     &    av_temp,sigm,sig_max,sig_min,
+     &    ncut_l,ncut_u,mset
+c***********************************************************************
+        real av_temp,sigm,sig_max,sig_min
+        integer*2 ncut_l,ncut_u,mset
+c
+c----   ncut_l is the lower rho density allowed
+c----   ncut_u is the upper rho density allowed
+c----   mset is the rho density map set to
+c---    av_temp is av rho outside wang envelope
+c
+c***********************************************************************
+c
+        COMMON /av_PDB/ P_NA,P_NR,P_RATM,P_ANUM,P_ANAM,P_RNAM,P_RNUM,
+     &               P_XYZ,P_OCC,P_BFAC,P_RECTYP
+c
+C***********************************************************************
+C PDBCOMMON.INC - The common block describing a PDB format file
+C
+C Robert Esnouf, January 1989
+C
+C The contents of these variables and their types follows:
+C
+C-- ! Number of atoms in protein
+        INTEGER*4       P_NA
+C-- ! Number of residues in protein
+        INTEGER*4       P_NR
+C-- ! Number of atoms per residue
+        INTEGER*4       P_RATM(nres)
+C-- ! ATOM or HETATM
+        CHARACTER*6     P_RECTYP(natom)
+C-- ! 'Number' of atom
+        CHARACTER*5     P_ANUM(natom)
+C-- ! Names of atoms
+        CHARACTER*5     P_ANAM(natom)
+C-- ! '3' letter residue names
+        CHARACTER*4     P_RNAM(natom)
+C-- ! 'Number' of residue
+        CHARACTER*5     P_RNUM(natom)
+C-- ! Atom coordinates
+        REAL*4          P_XYZ(3,natom)
+C-- ! Occupancies
+        REAL*4          P_OCC(natom)
+C-- ! B factors
+        REAL*4          P_BFAC(natom)
+c
+c***********************************************************************
+c
+        common/av_filest/ cstatus
+c
+c***********************************************************************
+        character*7 cstatus
+c
+c character string set to new or unknown...for unix users.
+c
+c***********************************************************************
+c
+        common/av_scalemap/ shi_map,sca_map
+c
+c***********************************************************************
+c
+        real shi_map,sca_map
+c
+c--- shi_map is the shift applied to map2. 
+c--- Defined as mean dens (map1) - means dens (map2)
+c
+c--- sca_map is the map scale applied to map after shift. defined
+c--- as rms(map1)/rms(map2)
+c
+c---  so p2^1 = (p2 + shi_map) * sca_map
+c
+c***********************************************************************
+c
+        common /av_correl/ cc_top,cc_bot,rms_delta,correl,sigma
+c
+c***********************************************************************
+c
+        real*8  cc_top,cc_bot,rms_delta
+        logical correl,sigma
+c
+c--- correl is flag for doing correlation mapping
+c--- sigma is flag for doing sigma mapping
+c--- cc_top, cc_bot and rms_delta are the counters for statistics
+c--- on all ncs related pixels for 1 observation
+c
+c***********************************************************************
+c---- end of common block definitions for averaging program
+c---- end of common block definitions for averaging program
+c***********************************************************************
+c***********************************************************************
+c
